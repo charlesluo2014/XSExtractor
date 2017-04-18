@@ -203,8 +203,21 @@ public class BasicParser implements Parser {
 
     @Override
     public String getContentText(Document document) {
-        return getContentEle(document).text();
-    }
+		Element el = getContentEle(document);
+		if (el == null) {
+			Element body = document.body();
+			List<org.jsoup.nodes.Node> childNodes = body.childNodes();
+			if (childNodes != null && !childNodes.isEmpty()) {
+				StringBuilder sb = new StringBuilder();
+				for (org.jsoup.nodes.Node node : childNodes) {
+					sb.append(node.outerHtml());
+				}
+				return sb.toString();
+			}
+			return null;
+		}
+		return el.text();
+	}
 
     private int doScoreToElement(Element element) {
         Elements children = element.children();
